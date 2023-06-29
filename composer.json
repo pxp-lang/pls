@@ -1,0 +1,8 @@
+{
+    "name": "pxp/pls",
+    "autoload": {
+        "psr-4": {
+            "Pxp\\Pls\\": "src"
+        }
+    }
+}
