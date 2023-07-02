@@ -7,9 +7,13 @@
     },
     "require": {
         "pxp/parser": "^0.0.4",
-        "phpactor/language-server-protocol": "^3.17"
+        "phpactor/language-server-protocol": "^3.17",
+        "pxp/type-deducer": "dev-main"
     },
     "require-dev": {
-        "symfony/var-dumper": "^6.3"
-    }
+        "symfony/var-dumper": "^6.3",
+        "spatie/ray": "^1.37"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }

@@ -4,8 +4,10 @@
         "vscode": "^1.79.0"
     },
     "dependencies": {
+        "tmp": "^0.2.1",
         "vscode-languageserver": "^8.1.0",
-        "vscode-languageserver-textdocument": "^1.0.8"
+        "vscode-languageserver-textdocument": "^1.0.8",
+        "which": "^3.0.1"
     },
     "devDependencies": {
         "@types/vscode": "^1.79.1"

@@ -10,14 +10,19 @@ function main(int $argc, array $argv) {
         help();
     }
 
+    $pls = new Pls();
     $command = $argv[1];
+
+    if ($command === 'completion') {
+        echo json_encode($pls->completion($argv[2], (int) $argv[3]));
+    }
 }
 
 function help(): never {
     echo "usage: pls <command>\n";
     echo "\n";
     echo "COMMANDS:\n";
-    echo "   goto-definition\n";
+    echo "   completion\n";
     exit(0);
 }
 

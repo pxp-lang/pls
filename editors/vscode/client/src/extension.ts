@@ -39,6 +39,7 @@ export function activate(context: ExtensionContext) {
     Output.write("Starting client")
 
     client.start()
+    client.outputChannel.show(true)
 
     Output.write("Client started")
 }
