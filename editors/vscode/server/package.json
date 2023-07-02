@@ -1,0 +1,13 @@
+{
+    "name": "@pxp/pls-server",
+    "engines": {
+        "vscode": "^1.79.0"
+    },
+    "dependencies": {
+        "vscode-languageserver": "^8.1.0",
+        "vscode-languageserver-textdocument": "^1.0.8"
+    },
+    "devDependencies": {
+        "@types/vscode": "^1.79.1"
+    }
+}

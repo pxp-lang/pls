@@ -1,0 +1,12 @@
+{
+    "name": "@pxp/pls-client",
+    "engines": {
+        "vscode": "^1.79.0"
+    },
+    "dependencies": {
+        "vscode-languageclient": "^8.1.0"
+    },
+    "devDependencies": {
+        "@types/vscode": "^1.79.1"
+    }
+}
