@@ -4,5 +4,12 @@
         "psr-4": {
             "Pxp\\Pls\\": "src"
         }
+    },
+    "require": {
+        "pxp/parser": "^0.0.4",
+        "phpactor/language-server-protocol": "^3.17"
+    },
+    "require-dev": {
+        "symfony/var-dumper": "^6.3"
     }
 }

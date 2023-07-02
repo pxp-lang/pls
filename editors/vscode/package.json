@@ -1,0 +1,43 @@
+{
+    "name": "@pxp/vscode-pls",
+    "private": true,
+    "displayName": "pls",
+    "description": "Language support for PHP and PXP.",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.79.0"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "contributes": {
+        "languages": [
+            {
+                "id": "pxp",
+                "aliases": [
+                    "PXP"
+                ],
+                "extensions": [
+                    ".pxp"
+                ],
+                "configuration": "./language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "pxp",
+                "scopeName": "source.pxp",
+                "path": "./syntaxes/pxp.tmLanguage.json",
+                "embeddedLanguages": {
+                    "text.html": "html",
+                    "source.php": "php",
+                    "source.sql": "sql",
+                    "text.xml": "xml",
+                    "source.js": "javascript",
+                    "source.json": "json",
+                    "source.css": "css"
+                }
+            }
+        ]
+    }
+}

@@ -1,2 +1,29 @@
 #!/usr/bin/env php
 <?php
+
+namespace Pxp\Pls;
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+function main(int $argc, array $argv) {
+    if ($argc === 1 || has_option('--help', $argv) || has_option('-h', $argv)) {
+        help();
+    }
+
+    $command = $argv[1];
+}
+
+function help(): never {
+    echo "usage: pls <command>\n";
+    echo "\n";
+    echo "COMMANDS:\n";
+    echo "   goto-definition\n";
+    exit(0);
+}
+
+function has_option(string $option, array $argv): bool
+{
+    return in_array($option, $argv);
+}
+
+main($argc, $argv);
