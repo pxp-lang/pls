@@ -1,10 +1,11 @@
 import { TextDocument } from "vscode-languageserver-textdocument";
-import { CompletionItem, InitializeParams, InitializeResult, Position, ProposedFeatures, TextDocumentPositionParams, TextDocumentSyncKind, TextDocuments, createConnection } from "vscode-languageserver/node";
+import { CompletionItem, CompletionItemKind, DocumentFormattingParams, InitializeParams, InitializeResult, Position, ProposedFeatures, TextDocumentPositionParams, TextDocumentSyncKind, TextDocuments, TextEdit, createConnection } from "vscode-languageserver/node";
 import { promisify } from "util";
 import * as child_process from 'child_process';
 import * as fs from 'fs'
 import which from 'which'
 import tmp from 'tmp'
+import { fileURLToPath } from "url";
 
 const tmpFile = tmp.fileSync()
 const phpPath = which.sync('php')
@@ -12,8 +13,12 @@ const plsPath = '/Users/ryan/Projects/Pxp/pls/bin/pls'
 const connection = createConnection(ProposedFeatures.all)
 const documents = new TextDocuments(TextDocument)
 const exec = promisify(child_process.exec);
+let folder
 
 connection.onInitialize((params: InitializeParams) => {
+    folder = fileURLToPath(decodeURI(params.workspaceFolders[0].uri))
+    console.log(folder)
+
     const result: InitializeResult = {
         capabilities: {
             textDocumentSync: TextDocumentSyncKind.Incremental,
@@ -35,7 +40,7 @@ connection.onInitialize((params: InitializeParams) => {
 })
 
 connection.onInitialized(() => {
-    console.log('initialized!')
+    console.log('Initialized!')
 })
 
 connection.onCompletion(async (request: TextDocumentPositionParams): Promise<CompletionItem[]> => {
@@ -47,14 +52,16 @@ connection.onCompletion(async (request: TextDocumentPositionParams): Promise<Com
     fs.writeFileSync(tmpFile.name, text)
     
     const index = positionToIndex(request.position, text) - 1
-    const stdout = (await exec(`${phpPath} ${plsPath} completion ${tmpFile.name} ${index}`)).stdout
+    const cmd = (await exec(`${phpPath} ${plsPath} completion ${folder} ${tmpFile.name} ${index}`))
+    const stdout = cmd.stdout
     const items: CompletionItem[] = JSON.parse(stdout).items
     
-    return items.map(({ label, kind }, index) => ({
+    return items.map(({ label, kind, insertText, insertTextFormat }, index) => ({
         label,
         kind,
+        insertText,
+        insertTextFormat,
         data: index,
-        insertText: label.substring(1)
         // documentation: "Hello, **world**!"
     }))
 })

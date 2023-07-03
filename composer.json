@@ -8,7 +8,8 @@
     "require": {
         "pxp/parser": "^0.0.4",
         "phpactor/language-server-protocol": "^3.17",
-        "pxp/type-deducer": "dev-main"
+        "pxp/type-deducer": "dev-main",
+        "friendsofphp/php-cs-fixer": "^3.20"
     },
     "require-dev": {
         "symfony/var-dumper": "^6.3",

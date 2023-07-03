@@ -2,6 +2,7 @@
 <?php
 
 namespace Pxp\Pls;
+use Exception;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -14,7 +15,7 @@ function main(int $argc, array $argv) {
     $command = $argv[1];
 
     if ($command === 'completion') {
-        echo json_encode($pls->completion($argv[2], (int) $argv[3]));
+        echo json_encode($pls->completion($argv[2], $argv[3], (int) $argv[4]));
     }
 }
 
@@ -29,6 +30,15 @@ function help(): never {
 function has_option(string $option, array $argv): bool
 {
     return in_array($option, $argv);
+}
+
+function get_option(string $option, array $argv): ?string
+{
+    if (! has_option($option, $argv)) {
+        return null;
+    }
+
+    return $argv[array_search($option, $argv) + 1] ?? null;
 }
 
 main($argc, $argv);
