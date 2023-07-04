@@ -5,10 +5,16 @@
             "Pxp\\Pls\\": "src"
         }
     },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../typededucer"
+        }
+    ],
     "require": {
         "pxp/parser": "^0.0.4",
         "phpactor/language-server-protocol": "^3.17",
-        "pxp/type-deducer": "dev-main",
+        "pxp/type-deducer": "*",
         "friendsofphp/php-cs-fixer": "^3.20"
     },
     "require-dev": {

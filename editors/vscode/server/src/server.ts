@@ -24,7 +24,7 @@ connection.onInitialize((params: InitializeParams) => {
             textDocumentSync: TextDocumentSyncKind.Incremental,
             completionProvider: {
                 resolveProvider: false,
-                triggerCharacters: ['>', '$', '(', '@']
+                triggerCharacters: ['>', '$', '(', '@', ':']
             },
             inlayHintProvider: false,
             definitionProvider: false,

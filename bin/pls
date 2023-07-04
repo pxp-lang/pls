@@ -15,7 +15,11 @@ function main(int $argc, array $argv) {
     $command = $argv[1];
 
     if ($command === 'completion') {
-        echo json_encode($pls->completion($argv[2], $argv[3], (int) $argv[4]));
+        try {
+            echo json_encode($pls->completion($argv[2], $argv[3], (int) $argv[4]));
+        } catch (Exception $e) {
+            ray($e->getMessage());
+        }
     }
 }
 

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "effd742f5e8f22caa85d2abe82bbcfb8",
+    "content-hash": "f97d5f429b767136b0751a54e0499ab8",
     "packages": [
         {
             "name": "composer/pcre",
@@ -1072,16 +1072,10 @@
         {
             "name": "pxp/type-deducer",
             "version": "dev-main",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/pxp-lang/type-deducer.git",
-                "reference": "29eb7a180c8c664ab5d9b152f58fe263292caa58"
-            },
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/pxp-lang/type-deducer/zipball/29eb7a180c8c664ab5d9b152f58fe263292caa58",
-                "reference": "29eb7a180c8c664ab5d9b152f58fe263292caa58",
-                "shasum": ""
+                "type": "path",
+                "url": "../typededucer",
+                "reference": "537c1199a4ebd0226a5a20a331548a36c97e2683"
             },
             "require": {
                 "nunomaduro/termwind": "^1.15",
@@ -1097,7 +1091,6 @@
                 "spatie/ray": "^1.28",
                 "symfony/var-dumper": "^6.3"
             },
-            "default-branch": true,
             "bin": [
                 "./bin/deducer"
             ],
@@ -1107,7 +1100,22 @@
                     "Pxp\\TypeDeducer\\": "src"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "Pxp\\TypeDeducer\\Tests\\": "tests"
+                }
+            },
+            "scripts": {
+                "test": [
+                    "vendor/bin/pest"
+                ],
+                "test-coverage": [
+                    "vendor/bin/pest --coverage"
+                ],
+                "format": [
+                    "vendor/bin/pint"
+                ]
+            },
             "license": [
                 "MIT"
             ],
@@ -1125,17 +1133,9 @@
                 "type-checker",
                 "type-deducer"
             ],
-            "support": {
-                "issues": "https://github.com/pxp-lang/type-deducer/issues",
-                "source": "https://github.com/pxp-lang/type-deducer/tree/main"
-            },
-            "funding": [
-                {
-                    "url": "https://github.com/pxp",
-                    "type": "github"
-                }
-            ],
-            "time": "2023-07-03T14:00:40+00:00"
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "roave/better-reflection",
@@ -3119,9 +3119,7 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "pxp/type-deducer": 20
-    },
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": [],
