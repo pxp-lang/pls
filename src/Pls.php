@@ -6,6 +6,7 @@ use Exception;
 use Phpactor\LanguageServerProtocol\CompletionItem;
 use Phpactor\LanguageServerProtocol\CompletionItemKind;
 use Phpactor\LanguageServerProtocol\CompletionList;
+use Phpactor\LanguageServerProtocol\Hover;
 use Phpactor\LanguageServerProtocol\InsertTextFormat;
 use Phpactor\LanguageServerProtocol\InsertTextMode;
 use PhpParser\ErrorHandler\Collecting;
@@ -21,6 +22,7 @@ use PhpParser\Node\Identifier;
 use PhpParser\Node\Stmt\Expression;
 use Pxp\Parser\Lexer\Emulative;
 use Pxp\Parser\Parser\Pxp;
+use Pxp\Pls\Providers\HoverProvider;
 use Pxp\TypeDeducer\Support;
 use Pxp\TypeDeducer\TypeDeducer;
 use Pxp\TypeDeducer\Types\NamedType;
@@ -29,6 +31,8 @@ use Roave\BetterReflection\Reflection\ReflectionProperty;
 final class Pls
 {
     private Pxp $parser;
+
+    private HoverProvider $hoverProvider;
 
     public function __construct()
     {
@@ -43,6 +47,19 @@ final class Pls
                 'endFilePos',
             ]
         ]));
+
+        $this->hoverProvider = new HoverProvider($this->parser);
+    }
+
+    public function hover(string $directory, string $file, int $position): ?Hover
+    {
+        $code = file_get_contents($file);
+        $ast = $this->parser->parse($code, new Collecting);
+
+        $typeDeducer = new TypeDeducer([$directory], $file);
+        $typeDeducer->setAst($ast);
+
+        return $this->hoverProvider->provide($typeDeducer, $position);
     }
 
     public function completion(string $directory, string $file, int $position): CompletionList
@@ -75,8 +92,6 @@ final class Pls
                     'insertText' => $class->getName(),
                 ]);
             }
-
-            ray($items);
 
             return CompletionList::fromArray([
                 'isIncomplete' => false,

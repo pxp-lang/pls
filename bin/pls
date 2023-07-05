@@ -21,6 +21,18 @@ function main(int $argc, array $argv) {
             ray($e->getMessage());
         }
     }
+
+    if ($command === 'hover') {
+        try {
+            $hover = $pls->hover($argv[2], $argv[3], (int) $argv[4]);
+
+            if ($hover !== null) {
+                echo json_encode($hover);
+            }
+        } catch (Exception $e) {
+            ray($e->getMessage());
+        }
+    }
 }
 
 function help(): never {
@@ -28,6 +40,7 @@ function help(): never {
     echo "\n";
     echo "COMMANDS:\n";
     echo "   completion\n";
+    echo "   hover\n";
     exit(0);
 }
 

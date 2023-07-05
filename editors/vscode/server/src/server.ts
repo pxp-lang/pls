@@ -1,5 +1,5 @@
 import { TextDocument } from "vscode-languageserver-textdocument";
-import { CompletionItem, CompletionItemKind, DocumentFormattingParams, InitializeParams, InitializeResult, Position, ProposedFeatures, TextDocumentPositionParams, TextDocumentSyncKind, TextDocuments, TextEdit, createConnection } from "vscode-languageserver/node";
+import { CompletionItem, CompletionItemKind, DocumentFormattingParams, Hover, HoverParams, InitializeParams, InitializeResult, Position, ProposedFeatures, TextDocumentPositionParams, TextDocumentSyncKind, TextDocuments, TextEdit, createConnection } from "vscode-languageserver/node";
 import { promisify } from "util";
 import * as child_process from 'child_process';
 import * as fs from 'fs'
@@ -30,7 +30,7 @@ connection.onInitialize((params: InitializeParams) => {
             definitionProvider: false,
             typeDefinitionProvider: false,
             documentSymbolProvider: false,
-            hoverProvider: false,
+            hoverProvider: true,
             documentFormattingProvider: false,
             documentRangeFormattingProvider: false,
         }
@@ -41,6 +41,29 @@ connection.onInitialize((params: InitializeParams) => {
 
 connection.onInitialized(() => {
     console.log('Initialized!')
+})
+
+connection.onHover(async (request: HoverParams): Promise<Hover | undefined> => {
+    console.log('Initiating hover request.');
+
+    const document = documents.get(request.textDocument.uri);
+    const text = document.getText();
+
+    fs.writeFileSync(tmpFile.name, text)
+
+    const index = positionToIndex(request.position, text) - 1
+    const cmd = (await exec(`${phpPath} ${plsPath} hover ${folder} ${tmpFile.name} ${index}`))
+    const stdout = cmd.stdout
+
+    if (stdout.length <= 0) {
+        return undefined
+    }
+
+    const hover = JSON.parse(stdout)
+
+    console.log(hover)
+
+    return hover as Hover
 })
 
 connection.onCompletion(async (request: TextDocumentPositionParams): Promise<CompletionItem[]> => {
