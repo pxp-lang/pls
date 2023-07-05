@@ -93,18 +93,16 @@ final class Pls
 
         // We're trying to autocomplete a variable.
         if ($node instanceof Variable) {
-            $traverser = new NodeTraverser();
-            $traverser->addVisitor($visitor = new VariableFindingVisitor($position));
-            $traverser->traverse($ast);
+            $variables = $typeDeducer->getVariablesInScopeOfNode($node);
+            $items = [];
 
-            $variables = $visitor->getVariables();
-            $variables = $variables[array_key_last($variables)];
-
-            $items = array_map(fn (string $variable) => CompletionItem::fromArray([
-                'label' => '$' . $variable,
-                'kind' => CompletionItemKind::VARIABLE,
-                'insertText' => $variable,
-            ]), $variables);
+            foreach ($variables as $name => $variable) {
+                $items[] = CompletionItem::fromArray([
+                    'label' => '$' . $name,
+                    'kind' => CompletionItemKind::VARIABLE,
+                    'insertText' => $name,
+                ]);
+            }
 
             return CompletionList::fromArray([
                 'isIncomplete' => false,
