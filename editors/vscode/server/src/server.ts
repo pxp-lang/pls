@@ -1,5 +1,5 @@
 import { TextDocument } from "vscode-languageserver-textdocument";
-import { CompletionItem, CompletionItemKind, DocumentFormattingParams, Hover, HoverParams, InitializeParams, InitializeResult, Position, ProposedFeatures, TextDocumentPositionParams, TextDocumentSyncKind, TextDocuments, TextEdit, createConnection } from "vscode-languageserver/node";
+import { CompletionItem, CompletionItemKind, DefinitionParams, DocumentFormattingParams, Hover, HoverParams, InitializeParams, InitializeResult, Location, Position, ProposedFeatures, Range, TextDocumentPositionParams, TextDocumentSyncKind, TextDocuments, TextEdit, createConnection } from "vscode-languageserver/node";
 import { promisify } from "util";
 import * as child_process from 'child_process';
 import * as fs from 'fs'
@@ -27,7 +27,7 @@ connection.onInitialize((params: InitializeParams) => {
                 triggerCharacters: ['>', '$', '(', '@', ':']
             },
             inlayHintProvider: false,
-            definitionProvider: false,
+            definitionProvider: true,
             typeDefinitionProvider: false,
             documentSymbolProvider: false,
             hoverProvider: true,
@@ -44,8 +44,6 @@ connection.onInitialized(() => {
 })
 
 connection.onHover(async (request: HoverParams): Promise<Hover | undefined> => {
-    console.log('Initiating hover request.');
-
     const document = documents.get(request.textDocument.uri);
     const text = document.getText();
 
@@ -61,9 +59,39 @@ connection.onHover(async (request: HoverParams): Promise<Hover | undefined> => {
 
     const hover = JSON.parse(stdout)
 
-    console.log(hover)
-
     return hover as Hover
+})
+
+connection.onDefinition(async (request: DefinitionParams): Promise<Location | undefined> => {
+    console.log('Initiating definition request.');
+
+    const document = documents.get(request.textDocument.uri);
+    const text = document.getText();
+
+    fs.writeFileSync(tmpFile.name, text)
+
+    const index = positionToIndex(request.position, text) - 1
+    const cmd = (await exec(`${phpPath} ${plsPath} definition ${folder} ${tmpFile.name} ${index}`))
+    const stdout = cmd.stdout
+
+    if (stdout.length <= 0) {
+        return undefined
+    }
+
+    const location: { position?: number, file?: string, line?: number, column?: number } = JSON.parse(stdout)
+
+    console.log(location)
+
+    // If we just get a position back from the server, it means we're in the current file
+    // and need to calculate the correct line & column numbers. It's actually faster to do
+    // this with JavaScript instead of PHP because the JIT will recognise this as a hot-path
+    // and optimise it for all future calls.
+    if (location.position !== undefined) {
+        const position = document.positionAt(location.position)
+        return Location.create(request.textDocument.uri, Range.create(position, position))
+    }
+
+    return Location.create(location.file, Range.create(location.line, location.column, location.line, location.column));
 })
 
 connection.onCompletion(async (request: TextDocumentPositionParams): Promise<CompletionItem[]> => {

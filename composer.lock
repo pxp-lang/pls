@@ -1075,7 +1075,7 @@
             "dist": {
                 "type": "path",
                 "url": "../typededucer",
-                "reference": "62d6f16182d8c83f7386b95fc748ca6265971dd2"
+                "reference": "f2ed9cc8d83dbe3a50df739d8083003d9e5f3b10"
             },
             "require": {
                 "nunomaduro/termwind": "^1.15",

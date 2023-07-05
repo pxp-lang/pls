@@ -33,6 +33,18 @@ function main(int $argc, array $argv) {
             ray($e->getMessage());
         }
     }
+
+    if ($command === 'definition') {
+        try {
+            $definition = $pls->definition($argv[2], $argv[3], (int) $argv[4]);
+
+            if ($definition !== null) {
+                echo json_encode($definition);
+            }
+        } catch (Exception $e) {
+            ray($e->getMessage());
+        }
+    }
 }
 
 function help(): never {
@@ -41,6 +53,7 @@ function help(): never {
     echo "COMMANDS:\n";
     echo "   completion\n";
     echo "   hover\n";
+    echo "   definition\n";
     exit(0);
 }
 

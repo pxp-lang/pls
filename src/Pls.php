@@ -9,6 +9,7 @@ use Phpactor\LanguageServerProtocol\CompletionList;
 use Phpactor\LanguageServerProtocol\Hover;
 use Phpactor\LanguageServerProtocol\InsertTextFormat;
 use Phpactor\LanguageServerProtocol\InsertTextMode;
+use Phpactor\LanguageServerProtocol\Location;
 use PhpParser\ErrorHandler\Collecting;
 use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Expr\ConstFetch;
@@ -22,6 +23,7 @@ use PhpParser\Node\Identifier;
 use PhpParser\Node\Stmt\Expression;
 use Pxp\Parser\Lexer\Emulative;
 use Pxp\Parser\Parser\Pxp;
+use Pxp\Pls\Providers\DefinitionProvider;
 use Pxp\Pls\Providers\HoverProvider;
 use Pxp\TypeDeducer\Support;
 use Pxp\TypeDeducer\TypeDeducer;
@@ -33,6 +35,8 @@ final class Pls
     private Pxp $parser;
 
     private HoverProvider $hoverProvider;
+
+    private DefinitionProvider $definitionProvider;
 
     public function __construct()
     {
@@ -49,6 +53,7 @@ final class Pls
         ]));
 
         $this->hoverProvider = new HoverProvider($this->parser);
+        $this->definitionProvider = new DefinitionProvider($this->parser);
     }
 
     public function hover(string $directory, string $file, int $position): ?Hover
@@ -60,6 +65,17 @@ final class Pls
         $typeDeducer->setAst($ast);
 
         return $this->hoverProvider->provide($typeDeducer, $position);
+    }
+
+    public function definition(string $directory, string $file, int $position): ?array
+    {
+        $code = file_get_contents($file);
+        $ast = $this->parser->parse($code, new Collecting);
+
+        $typeDeducer = new TypeDeducer([$directory], $file);
+        $typeDeducer->setAst($ast);
+
+        return $this->definitionProvider->provide($typeDeducer, $position);
     }
 
     public function completion(string $directory, string $file, int $position): CompletionList
