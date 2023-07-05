@@ -19,13 +19,10 @@ use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Stmt\Expression;
-use PhpParser\NodeTraverser;
 use Pxp\Parser\Lexer\Emulative;
 use Pxp\Parser\Parser\Pxp;
-use Pxp\Pls\Visitors\VariableFindingVisitor;
 use Pxp\TypeDeducer\Support;
 use Pxp\TypeDeducer\TypeDeducer;
-use Pxp\TypeDeducer\Types\MixedType;
 use Pxp\TypeDeducer\Types\NamedType;
 use Roave\BetterReflection\Reflection\ReflectionProperty;
 
