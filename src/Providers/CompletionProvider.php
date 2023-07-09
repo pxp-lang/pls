@@ -19,6 +19,7 @@ use Pxp\TypeDeducer\TypeDeducer;
 use PhpParser\Node\Expr\Variable;
 use Exception;
 use Pxp\TypeDeducer\Types\NamedType;
+use Roave\BetterReflection\Reflection\ReflectionEnum;
 
 class CompletionProvider
 {
@@ -130,6 +131,16 @@ class CompletionProvider
             $reflection = $type->getReflection();
             $items = [];
 
+            if ($reflection instanceof ReflectionEnum) {
+                foreach ($reflection->getCases() as $case) {
+                    $items[] = CompletionItem::fromArray([
+                        'label' => $case->getName(),
+                        'kind' => CompletionItemKind::ENUM_MEMBER,
+                        'insertText' => $case->getName(),
+                    ]);
+                }
+            }
+
             foreach ($reflection->getConstants() as $constant) {
                 if (!$constant->isPublic()) {
                     continue;
@@ -148,15 +159,21 @@ class CompletionProvider
                 'insertText' => 'class',
             ]);
 
-            foreach ($reflection->getProperties(\ReflectionProperty::IS_STATIC) as $property) {
-                $items[] = CompletionItem::fromArray([
-                    'label' => '$' . $property->getName(),
-                    'kind' => CompletionItemKind::PROPERTY,
-                    'insertText' => '$' . $property->getName(),
-                ]);
+            if (! $reflection instanceof ReflectionEnum) {
+                foreach ($reflection->getProperties(\ReflectionProperty::IS_STATIC) as $property) {
+                    $items[] = CompletionItem::fromArray([
+                        'label' => '$' . $property->getName(),
+                        'kind' => CompletionItemKind::PROPERTY,
+                        'insertText' => '$' . $property->getName(),
+                    ]);
+                }
             }
 
             foreach ($reflection->getMethods() as $method) {
+                if (!$method->isStatic()) {
+                    continue;
+                }
+
                 if ($method->getNumberOfParameters() > 0) {
                     $insertText = $method->getName() . '($1)$0';
                     $insertTextFormat = InsertTextFormat::SNIPPET;
