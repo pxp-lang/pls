@@ -18,7 +18,7 @@ function main(int $argc, array $argv) {
         try {
             echo json_encode($pls->completion($argv[2], $argv[3], (int) $argv[4]));
         } catch (Exception $e) {
-            ray($e->getMessage());
+            ray($e);
         }
     }
 

@@ -105,9 +105,10 @@ connection.onCompletion(async (request: TextDocumentPositionParams): Promise<Com
     const index = positionToIndex(request.position, text) - 1
     const cmd = (await exec(`${phpPath} ${plsPath} completion ${folder} ${tmpFile.name} ${index}`))
     const stdout = cmd.stdout
-    const items: CompletionItem[] = JSON.parse(stdout).items
+
+    console.log(stdout)
     
-    return items.map(({ label, kind, insertText, insertTextFormat }, index) => ({
+    return JSON.parse(stdout).map(({ label, kind, insertText, insertTextFormat }, index) => ({
         label,
         kind,
         insertText,

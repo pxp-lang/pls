@@ -5,10 +5,20 @@ namespace Pxp\Pls\Providers;
 use Phpactor\LanguageServerProtocol\CompletionItem;
 use Phpactor\LanguageServerProtocol\CompletionItemKind;
 use Phpactor\LanguageServerProtocol\InsertTextFormat;
+use PhpParser\Node\Expr\ClassConstFetch;
+use PhpParser\Node\Expr\ConstFetch;
+use PhpParser\Node\Expr\FuncCall;
+use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Expr\New_;
+use PhpParser\Node\Expr\PropertyFetch;
+use PhpParser\Node\Expr\StaticCall;
+use PhpParser\Node\Stmt\Expression;
 use Pxp\Parser\Parser\Pxp;
 use Pxp\TypeDeducer\Support;
 use Pxp\TypeDeducer\TypeDeducer;
+use PhpParser\Node\Expr\Variable;
 use Exception;
+use Pxp\TypeDeducer\Types\NamedType;
 
 class CompletionProvider
 {

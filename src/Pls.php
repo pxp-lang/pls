@@ -87,7 +87,7 @@ final class Pls
         $code = file_get_contents($file);
         $ast = $this->parser->parse($code, new Collecting);
 
-        $typeDeducer = new TypeDeducer([$directory, $file]);
+        $typeDeducer = new TypeDeducer([$directory], $file);
         $typeDeducer->setAst($ast);
 
         return $this->completionProvider->provide($typeDeducer, $position);
