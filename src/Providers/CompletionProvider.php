@@ -30,10 +30,11 @@ class CompletionProvider
 
     public function provide(TypeDeducer $typeDeducer, int $position): array
     {
+        $items = [];
         $node = Support::findNodeAtPosition($typeDeducer->getAst(), $position, searchNonExpr: true);
 
         if ($node === null) {
-            return [];
+            return $items;
         }
 
         $parent = $node->getAttribute('parent');
@@ -42,10 +43,8 @@ class CompletionProvider
             try {
                 $classes = $typeDeducer->getReflectionProvider()->getAllClasses();
             } catch (Exception $e) {
-                return [];
+                return $items;
             }
-
-            $items = [];
 
             foreach ($classes as $class) {
                 if (!$class->isInstantiable()) {
@@ -58,8 +57,6 @@ class CompletionProvider
                     'insertText' => $class->getName(),
                 ]);
             }
-
-            return $items;
         }
 
         if ($node instanceof Expression) {
@@ -69,7 +66,6 @@ class CompletionProvider
         // We're trying to autocomplete a variable.
         if ($node instanceof Variable || $parent instanceof Variable) {
             $variables = $typeDeducer->getVariablesInScopeOfNode($node);
-            $items = [];
 
             foreach ($variables as $name => $variable) {
                 $items[] = CompletionItem::fromArray([
@@ -78,19 +74,16 @@ class CompletionProvider
                     'insertText' => $name,
                 ]);
             }
-
-            return $items;
         }
 
         if ($node instanceof PropertyFetch || $parent instanceof PropertyFetch) {
             $type = $typeDeducer->getTypeOfNode($node->var);
 
             if (!$type instanceof NamedType) {
-                return [];
+                return $items;
             }
 
             $reflection = $type->getReflection();
-            $items = [];
 
             foreach ($reflection->getProperties(\ReflectionProperty::IS_PUBLIC) as $property) {
                 $items[] = CompletionItem::fromArray([
@@ -116,19 +109,16 @@ class CompletionProvider
                     'insertTextFormat' => $insertTextFormat,
                 ]);
             }
-
-            return $items;
         }
 
         if ($node instanceof ClassConstFetch || $parent instanceof ClassConstFetch) {
             $type = $typeDeducer->getTypeOfNode($node->class);
 
             if (!$type instanceof NamedType) {
-                return [];
+                return $items;
             }
 
             $reflection = $type->getReflection();
-            $items = [];
 
             if ($reflection instanceof ReflectionEnum) {
                 foreach ($reflection->getCases() as $case) {
@@ -188,8 +178,6 @@ class CompletionProvider
                     'insertTextFormat' => $insertTextFormat,
                 ]);
             }
-
-            return $items;
         }
 
         if ($node instanceof FuncCall || $parent instanceof FuncCall) {
@@ -200,10 +188,9 @@ class CompletionProvider
             $reflectionProvider = $typeDeducer->getReflectionProvider();
 
             if (!$reflectionProvider->hasFunction($resolvedName)) {
-                return [];
+                return $items;
             }
 
-            $items = [];
             $reflection = $reflectionProvider->getFunction($resolvedName);
 
             foreach ($reflection->getParameters() as $parameter) {
@@ -213,19 +200,17 @@ class CompletionProvider
                     'insertText' => $parameter->getName() . ': ',
                 ]);
             }
-
-            return $items;
         }
 
         if ($node instanceof MethodCall || $node instanceof StaticCall) {
             if (!$node->name instanceof Identifier) {
-                return [];
+                return $items;
             }
 
             $type = $typeDeducer->getTypeOfNode($node->var);
 
             if (!$type instanceof NamedType) {
-                return [];
+                return $items;
             }
 
             $items = [];
@@ -233,7 +218,7 @@ class CompletionProvider
             $reflectionMethod = $reflection->getMethod($node->name->toString());
 
             if ($reflectionMethod === null) {
-                return [];
+                return $items;
             }
 
             foreach ($reflectionMethod->getParameters() as $parameter) {
@@ -243,13 +228,10 @@ class CompletionProvider
                     'insertText' => $parameter->getName() . ': ',
                 ]);
             }
-
-            return $items;
         }
 
         if ($node instanceof ConstFetch || $parent instanceof ConstFetch) {
             $classes = $typeDeducer->getReflectionProvider()->getAllClasses();
-            $items = [];
 
             foreach ($classes as $class) {
                 $items[] = CompletionItem::fromArray([
@@ -285,10 +267,8 @@ class CompletionProvider
                     'insertText' => $keyword,
                 ]);
             }
-
-            return array_values($items);
         }
 
-        return [];
+        return array_values($items);
     }
 }
