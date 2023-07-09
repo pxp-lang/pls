@@ -14,6 +14,7 @@ use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Stmt\Expression;
 use Pxp\Parser\Parser\Pxp;
+use Pxp\Pls\Support\Keywords;
 use Pxp\TypeDeducer\Support;
 use Pxp\TypeDeducer\TypeDeducer;
 use PhpParser\Node\Expr\Variable;
@@ -36,8 +37,6 @@ class CompletionProvider
         }
 
         $parent = $node->getAttribute('parent');
-
-        ray($node::class . ' + ' . $parent::class);
 
         if ($node instanceof New_ || $parent instanceof New_) {
             try {
@@ -276,6 +275,14 @@ class CompletionProvider
                     'kind' => CompletionItemKind::FUNCTION ,
                     'insertText' => $insertText,
                     'insertTextFormat' => $insertTextFormat,
+                ]);
+            }
+
+            foreach (Keywords::all() as $keyword) {
+                $items[] = CompletionItem::fromArray([
+                    'label' => $keyword,
+                    'kind' => CompletionItemKind::KEYWORD,
+                    'insertText' => $keyword,
                 ]);
             }
 

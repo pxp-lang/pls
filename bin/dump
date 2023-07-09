@@ -1,0 +1,10 @@
+#!/usr/bin/env php
+<?php
+
+use Pxp\TypeDeducer\Reflection\TolerantParser;
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+$parser = new TolerantParser();
+$file = file_get_contents($argv[1]);
+dump($parser->parse($file));
