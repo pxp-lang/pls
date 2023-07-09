@@ -28,9 +28,17 @@ class CompletionProvider
 
     public function provide(TypeDeducer $typeDeducer, int $position): array
     {
-        $node = Support::findNodeAtPosition($typeDeducer->getAst(), $position);
+        $node = Support::findNodeAtPosition($typeDeducer->getAst(), $position, searchNonExpr: true);
 
-        if ($node instanceof New_) {
+        if ($node === null) {
+            return [];
+        }
+
+        $parent = $node->getAttribute('parent');
+
+        ray($node::class . ' + ' . $parent::class);
+
+        if ($node instanceof New_ || $parent instanceof New_) {
             try {
                 $classes = $typeDeducer->getReflectionProvider()->getAllClasses();
             } catch (Exception $e) {
@@ -59,7 +67,7 @@ class CompletionProvider
         }
 
         // We're trying to autocomplete a variable.
-        if ($node instanceof Variable) {
+        if ($node instanceof Variable || $parent instanceof Variable) {
             $variables = $typeDeducer->getVariablesInScopeOfNode($node);
             $items = [];
 
@@ -74,7 +82,7 @@ class CompletionProvider
             return $items;
         }
 
-        if ($node instanceof PropertyFetch) {
+        if ($node instanceof PropertyFetch || $parent instanceof PropertyFetch) {
             $type = $typeDeducer->getTypeOfNode($node->var);
 
             if (!$type instanceof NamedType) {
@@ -112,7 +120,7 @@ class CompletionProvider
             return $items;
         }
 
-        if ($node instanceof ClassConstFetch) {
+        if ($node instanceof ClassConstFetch || $parent instanceof ClassConstFetch) {
             $type = $typeDeducer->getTypeOfNode($node->class);
 
             if (!$type instanceof NamedType) {
@@ -168,7 +176,7 @@ class CompletionProvider
             return $items;
         }
 
-        if ($node instanceof FuncCall) {
+        if ($node instanceof FuncCall || $parent instanceof FuncCall) {
             // FIXME: Can we get rid of this? Right now it's needed to access the file scope.
             $typeDeducer->getTypeOfNode($node);
 
@@ -223,7 +231,7 @@ class CompletionProvider
             return $items;
         }
 
-        if ($node instanceof ConstFetch) {
+        if ($node instanceof ConstFetch || $parent instanceof ConstFetch) {
             $classes = $typeDeducer->getReflectionProvider()->getAllClasses();
             $items = [];
 
@@ -255,10 +263,6 @@ class CompletionProvider
             }
 
             return array_values($items);
-        }
-
-        if ($node !== null) {
-            ray('dont handle: ' . $node::class);
         }
 
         return [];
