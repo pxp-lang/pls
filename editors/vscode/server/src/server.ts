@@ -1,5 +1,5 @@
 import { TextDocument } from "vscode-languageserver-textdocument";
-import { CompletionItem, CompletionItemKind, DefinitionParams, DocumentFormattingParams, Hover, HoverParams, InitializeParams, InitializeResult, Location, Position, ProposedFeatures, Range, TextDocumentPositionParams, TextDocumentSyncKind, TextDocuments, TextEdit, createConnection } from "vscode-languageserver/node";
+import { CompletionItem, CompletionItemLabelDetails, DefinitionParams, Hover, HoverParams, InitializeParams, InitializeResult, Location, Position, ProposedFeatures, Range, TextDocumentPositionParams, TextDocumentSyncKind, TextDocuments, TextEdit, createConnection } from "vscode-languageserver/node";
 import { promisify } from "util";
 import * as child_process from 'child_process';
 import * as fs from 'fs'
@@ -23,7 +23,7 @@ connection.onInitialize((params: InitializeParams) => {
             textDocumentSync: TextDocumentSyncKind.Incremental,
             completionProvider: {
                 resolveProvider: false,
-                triggerCharacters: ['>', '$', '(', '@', ':', '\\']
+                triggerCharacters: ['>', '$', '(', '@', ':', '\\'],
             },
             inlayHintProvider: false,
             definitionProvider: true,
@@ -105,14 +105,19 @@ connection.onCompletion(async (request: TextDocumentPositionParams): Promise<Com
     const cmd = (await exec(`${phpPath} ${plsPath} completion ${folder} ${tmpFile.name} ${index}`))
     const stdout = cmd.stdout
     
-    return JSON.parse(stdout).map(({ label, kind, insertText, insertTextFormat }, index) => ({
-        label,
-        kind,
-        insertText,
-        insertTextFormat,
-        data: index,
-        // documentation: "Hello, **world**!"
-    }))
+    return JSON.parse(stdout).map(({ label, kind, insertText, insertTextFormat, labelDetails }, index) => {
+        return {
+            label,
+            labelDetails: {
+                description: labelDetails?.description || undefined,
+            },
+            kind,
+            insertText,
+            insertTextFormat,
+            data: index,
+            // documentation: "Hello, **world**!"
+        } as CompletionItem
+    })
 })
 
 documents.listen(connection)

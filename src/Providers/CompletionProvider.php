@@ -19,6 +19,7 @@ use Pxp\TypeDeducer\Support;
 use Pxp\TypeDeducer\TypeDeducer;
 use PhpParser\Node\Expr\Variable;
 use Exception;
+use Phpactor\LanguageServerProtocol\CompletionItemLabelDetails;
 use PhpParser\Node\Name;
 use PhpParser\Node\Stmt\UseUse;
 use Pxp\TypeDeducer\Types\NamedType;
@@ -50,7 +51,10 @@ class CompletionProvider
 
                 foreach ($classes as $class) {
                     $items[] = CompletionItem::fromArray([
-                        'label' => $class->getName(),
+                        'label' => $class->getShortName(),
+                        'labelDetails' => CompletionItemLabelDetails::fromArray([
+                            'description' => $class->getName(),
+                        ]),
                         'kind' => match (true) {
                             $class->isEnum() => CompletionItemKind::ENUM,
                             $class->isInterface() => CompletionItemKind::INTERFACE,
@@ -96,7 +100,10 @@ class CompletionProvider
                 }
 
                 $items[] = CompletionItem::fromArray([
-                    'label' => $class->getName(),
+                    'label' => $class->getShortName(),
+                    'labelDetails' => CompletionItemLabelDetails::fromArray([
+                        'description' => $class->getName(),
+                    ]),
                     'kind' => CompletionItemKind::CLASS_,
                     'insertText' => $class->getName(),
                 ]);
