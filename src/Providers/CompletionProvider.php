@@ -19,7 +19,10 @@ use Pxp\TypeDeducer\Support;
 use Pxp\TypeDeducer\TypeDeducer;
 use PhpParser\Node\Expr\Variable;
 use Exception;
+use PhpParser\Node\Name;
+use PhpParser\Node\Stmt\UseUse;
 use Pxp\TypeDeducer\Types\NamedType;
+use Roave\BetterReflection\Reflection\Adapter\ReflectionClass;
 use Roave\BetterReflection\Reflection\ReflectionEnum;
 
 class CompletionProvider
@@ -38,6 +41,47 @@ class CompletionProvider
         }
 
         $parent = $node->getAttribute('parent');
+
+        if ($node instanceof Name && $parent instanceof UseUse) {
+            // use F, use Playground\B
+            //     ^                 ^
+            if ($node->isUnqualified() || !str_ends_with($node->toString(), '\\')) {
+                $classes = $typeDeducer->getReflectionProvider()->getAllClasses();
+
+                foreach ($classes as $class) {
+                    $items[] = CompletionItem::fromArray([
+                        'label' => $class->getName(),
+                        'kind' => match (true) {
+                            $class->isEnum() => CompletionItemKind::ENUM,
+                            $class->isInterface() => CompletionItemKind::INTERFACE,
+                            default => CompletionItemKind::CLASS_,
+                        },
+                        'insertText' => $class->getName(),
+                    ]);
+                }
+            } elseif ($node->isQualified() && str_ends_with($node->toString(), '\\')) {
+                $classes = $typeDeducer->getReflectionProvider()->getAllClasses();
+                $namespace = $node->toString();
+
+                foreach ($classes as $class) {
+                    if (! str_starts_with($class->getName(), $namespace)) {
+                        continue;
+                    }
+
+                    $items[] = CompletionItem::fromArray([
+                        'label' => substr($class->getName(), strlen($namespace)),
+                        'kind' => match (true) {
+                            $class->isEnum() => CompletionItemKind::ENUM,
+                            $class->isInterface() => CompletionItemKind::INTERFACE,
+                            default => CompletionItemKind::CLASS_,
+                        },
+                        'insertText' => substr($class->getName(), strlen($namespace)),
+                    ]);
+                }
+            }
+
+            return $items;
+        }
 
         if ($node instanceof New_ || $parent instanceof New_) {
             try {

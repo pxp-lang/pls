@@ -17,14 +17,13 @@ let folder
 
 connection.onInitialize((params: InitializeParams) => {
     folder = fileURLToPath(decodeURI(params.workspaceFolders[0].uri))
-    console.log(folder)
 
     const result: InitializeResult = {
         capabilities: {
             textDocumentSync: TextDocumentSyncKind.Incremental,
             completionProvider: {
                 resolveProvider: false,
-                triggerCharacters: ['>', '$', '(', '@', ':']
+                triggerCharacters: ['>', '$', '(', '@', ':', '\\']
             },
             inlayHintProvider: false,
             definitionProvider: true,
