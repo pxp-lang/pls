@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f97d5f429b767136b0751a54e0499ab8",
+    "content-hash": "bdc29dd62d2900ba7fa8d4f7c1f23b22",
     "packages": [
         {
             "name": "composer/pcre",
@@ -1017,16 +1017,16 @@
         },
         {
             "name": "pxp/parser",
-            "version": "v0.0.4",
+            "version": "v0.0.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/pxp-lang/parser.git",
-                "reference": "826ef8a6892c4c5851bde91ceeb441e94cedcde3"
+                "reference": "e1ca2c93469dd040035a1f84aa1730ae5cc3f71e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pxp-lang/parser/zipball/826ef8a6892c4c5851bde91ceeb441e94cedcde3",
-                "reference": "826ef8a6892c4c5851bde91ceeb441e94cedcde3",
+                "url": "https://api.github.com/repos/pxp-lang/parser/zipball/e1ca2c93469dd040035a1f84aa1730ae5cc3f71e",
+                "reference": "e1ca2c93469dd040035a1f84aa1730ae5cc3f71e",
                 "shasum": ""
             },
             "require": {
@@ -1065,9 +1065,9 @@
                 "pxp"
             ],
             "support": {
-                "source": "https://github.com/pxp-lang/parser/tree/v0.0.4"
+                "source": "https://github.com/pxp-lang/parser/tree/v0.0.6"
             },
-            "time": "2023-05-19T15:17:42+00:00"
+            "time": "2023-07-11T20:53:34+00:00"
         },
         {
             "name": "pxp/type-deducer",
@@ -1075,13 +1075,13 @@
             "dist": {
                 "type": "path",
                 "url": "../typededucer",
-                "reference": "0abaa92d3065a7c0f7c2a57776af4e40192feaea"
+                "reference": "f757da1cd1403a656b853ce8ddb014d68bf7bc40"
             },
             "require": {
                 "nunomaduro/termwind": "^1.15",
                 "php": "^8.1",
                 "phpstan/phpdoc-parser": "^1.22",
-                "pxp/parser": "^0.0.4",
+                "pxp/parser": "^0.0.6",
                 "roave/better-reflection": "^6.10",
                 "symfony/finder": "^6.3"
             },
