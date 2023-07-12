@@ -20,6 +20,7 @@ use Pxp\TypeDeducer\TypeDeducer;
 use PhpParser\Node\Expr\Variable;
 use Exception;
 use Phpactor\LanguageServerProtocol\CompletionItemLabelDetails;
+use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
 use PhpParser\Node\Stmt\UseUse;
 use Pxp\TypeDeducer\Types\NamedType;
